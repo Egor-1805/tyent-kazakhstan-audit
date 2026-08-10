@@ -1220,9 +1220,48 @@ document.querySelectorAll('.acc-head').forEach(head=>{
   const btn = document.getElementById('soundToggle');
   let audioCtx, masterGain, started = false, muted = false;
 
+  function playDroplet(t0){
+    // crisp high "tick" transient — the moment of impact
+    const tick = audioCtx.createOscillator();
+    tick.type = 'sine';
+    tick.frequency.setValueAtTime(2600, t0);
+    const tickGain = audioCtx.createGain();
+    tickGain.gain.setValueAtTime(0.001, t0);
+    tickGain.gain.linearRampToValueAtTime(0.3, t0 + 0.004);
+    tickGain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.05);
+    tick.connect(tickGain).connect(audioCtx.destination);
+    tick.start(t0); tick.stop(t0 + 0.06);
+
+    // main drip tone — quick pitch drop, classic "plip"
+    const osc = audioCtx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1500, t0);
+    osc.frequency.exponentialRampToValueAtTime(300, t0 + 0.13);
+    const oscGain = audioCtx.createGain();
+    oscGain.gain.setValueAtTime(0.001, t0);
+    oscGain.gain.linearRampToValueAtTime(0.45, t0 + 0.008);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.4);
+    osc.connect(oscGain).connect(audioCtx.destination);
+    osc.start(t0); osc.stop(t0 + 0.42);
+
+    // lower resonant body, slightly delayed — the droplet's "plop" landing in water
+    const osc2 = audioCtx.createOscillator();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(560, t0 + 0.025);
+    osc2.frequency.exponentialRampToValueAtTime(170, t0 + 0.24);
+    const osc2Gain = audioCtx.createGain();
+    osc2Gain.gain.setValueAtTime(0.001, t0 + 0.025);
+    osc2Gain.gain.linearRampToValueAtTime(0.22, t0 + 0.045);
+    osc2Gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.46);
+    osc2.connect(osc2Gain).connect(audioCtx.destination);
+    osc2.start(t0 + 0.025); osc2.stop(t0 + 0.48);
+  }
+
   function buildWaterSound(){
     audioCtx = new (window.AudioContext||window.webkitAudioContext)();
     if(audioCtx.state !== 'running'){ audioCtx.resume(); }
+
+    playDroplet(audioCtx.currentTime);
 
     const bufferSize = 2 * audioCtx.sampleRate;
     const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
@@ -1262,8 +1301,10 @@ document.querySelectorAll('.acc-head').forEach(head=>{
     lfo2.connect(lfo2Gain).connect(lowpass.frequency);
     lfo2.start(0);
 
+    // ambience fades in just after the droplet lands, underneath it
     masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-    masterGain.gain.linearRampToValueAtTime(0.065, audioCtx.currentTime + 2.5);
+    masterGain.gain.setValueAtTime(0, audioCtx.currentTime + 0.2);
+    masterGain.gain.linearRampToValueAtTime(0.065, audioCtx.currentTime + 2.7);
   }
 
   function start(){
