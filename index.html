@@ -406,6 +406,10 @@ tbody td:first-child{font-weight:700; color:var(--navy-3);}
 .outro .hero-waves{top:-2px; bottom:auto; transform:rotate(180deg);}
 .outro-content{max-width:820px; margin:0 auto; text-align:center; position:relative; z-index:2;}
 .outro-text{font-family:'Fraunces',serif; font-size:clamp(1.1rem,2.1vw,1.5rem); line-height:1.7; color:rgba(255,255,255,.92); margin:26px 0 40px;}
+.outro-callouts{max-width:760px; margin:26px auto 40px; text-align:left; display:flex; flex-direction:column; gap:14px;}
+.outro-callouts .callout{margin-bottom:0; font-size:.96rem;}
+.outro-actions{margin:10px 0 0; padding-left:20px; display:flex; flex-direction:column; gap:6px;}
+.outro-actions li::marker{color:var(--aqua);}
 .outro-credit{font-size:.74rem; color:rgba(255,255,255,.45); letter-spacing:.03em;}
 .outro-mark{width:44px; height:56px; margin:0 auto 20px; position:relative;}
 .outro-mark::before{content:""; position:absolute; inset:0; border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:linear-gradient(150deg,var(--aqua),var(--teal-2) 55%,var(--teal)); box-shadow:0 0 30px rgba(94,234,212,.5);}
@@ -1058,7 +1062,19 @@ tbody td:first-child{font-weight:700; color:var(--navy-3);}
   <div class="container outro-content reveal">
     <div class="outro-mark"></div>
     <span class="eyebrow light">Вывод</span>
-    <p class="outro-text">У TYENT/«Умная вода» — реальный, проверяемый статус (официальный дистрибьютор с 2014 года, 3 официальных представительства согласно сайту: Алматы, Астана и Москва) и уже частично настроенная рекламная инфраструктура (Facebook Pixel, DoubleClick). Но реестровые данные казахстанского юрлица показывают объективный спад выручки два года подряд, а цифровое присутствие почти невидимо в органическом поиске и опирается на небольшую базу отзывов на картах — при этом сами карточки на Яндекс.Картах и Google Картах в Астане уже существуют и просто ждут первых отзывов. Часть проблем — типичные для конструкторских сайтов (Tilda) и заброшенных разделов, часть — специфичные именно для TYENT: полностью скрытые цены на дорогой продукт, нерабочая страница каталога и неудобный для поиска ник в Instagram. Это сильный, проверенный бизнес с бессистемным цифровым присутствием — именно это можно исправить в первые месяцы работы: вернуть цену и каталог на сайт, дозаполнить и наполнить отзывами уже существующие карточки в Астане, свести все каналы в один трекер, и опереться на уже работающую рекламную инфраструктуру вместо того, чтобы строить её с нуля.</p>
+    <div class="outro-callouts">
+      <div class="callout c-blue"><span class="ic">🏢</span><div>У TYENT/«Умная вода» — реальный, проверяемый статус (официальный дистрибьютор с 2014 года, 3 официальных представительства согласно сайту: Алматы, Астана и Москва) и уже частично настроенная рекламная инфраструктура (Facebook Pixel, DoubleClick).</div></div>
+      <div class="callout c-gold"><span class="ic">⚠️</span><div>Но реестровые данные казахстанского юрлица показывают объективный спад выручки два года подряд, а цифровое присутствие почти невидимо в органическом поиске и опирается на небольшую базу отзывов на картах — при этом сами карточки на Яндекс.Картах и Google Картах в Астане уже существуют и просто ждут первых отзывов.</div></div>
+      <div class="callout c-plain"><span class="ic">🔍</span><div>Часть проблем — типичные для конструкторских сайтов (Tilda) и заброшенных разделов, часть — специфичные именно для TYENT: полностью скрытые цены на дорогой продукт, нерабочая страница каталога и неудобный для поиска ник в Instagram.</div></div>
+      <div class="callout c-green"><span class="ic">✅</span><div><b>Это сильный, проверенный бизнес с бессистемным цифровым присутствием</b> — именно это можно исправить в первые месяцы работы:
+        <ul class="outro-actions">
+          <li>вернуть цену и каталог на сайт</li>
+          <li>дозаполнить и наполнить отзывами уже существующие карточки в Астане</li>
+          <li>свести все каналы в один трекер</li>
+          <li>опереться на уже работающую рекламную инфраструктуру вместо того, чтобы строить её с нуля</li>
+        </ul>
+      </div></div>
+    </div>
     <div class="outro-credit">TYENT Kazakhstan · Маркетинговый бизнес-аудит · подготовлено на основе открытых источников и предоставленных материалов</div>
   </div>
 </footer>
