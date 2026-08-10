@@ -1262,7 +1262,7 @@ document.querySelectorAll('.acc-head').forEach(head=>{
     btn.classList.add('playing');
   }
 
-  ['pointerdown','keydown','scroll'].forEach(evt=>{
+  ['click','keydown','scroll'].forEach(evt=>{
     window.addEventListener(evt, start, {once:true, passive:true});
   });
 
