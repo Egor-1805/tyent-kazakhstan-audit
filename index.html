@@ -126,6 +126,16 @@ img{max-width:100%; display:block;}
 .sound-toggle .on{display:none;}
 .sound-toggle.playing .on{display:inline;}
 .sound-toggle.playing .off{display:none;}
+.sound-toggle.hint{animation:soundHint 1.6s ease-in-out infinite;}
+.sound-toggle.hint::after{
+  content:"звук"; position:absolute; right:52px; top:50%; transform:translateY(-50%);
+  font-size:.72rem; font-weight:600; color:rgba(255,255,255,.75); white-space:nowrap;
+  background:rgba(5,32,51,.62); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:6px 12px;
+  animation:soundHintLabel 1.6s ease-in-out infinite;
+}
+@keyframes soundHint{0%,100%{box-shadow:0 12px 30px -14px rgba(0,0,0,.5), 0 0 0 0 rgba(94,234,212,.55);} 50%{box-shadow:0 12px 30px -14px rgba(0,0,0,.5), 0 0 0 9px rgba(94,234,212,0);}}
+@keyframes soundHintLabel{0%,100%{opacity:.9;} 50%{opacity:.35;}}
 
 /* ---------- hero ---------- */
 .hero{
@@ -1212,6 +1222,7 @@ document.querySelectorAll('.acc-head').forEach(head=>{
 
   function buildWaterSound(){
     audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state !== 'running'){ audioCtx.resume(); }
 
     const bufferSize = 2 * audioCtx.sampleRate;
     const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
@@ -1252,7 +1263,7 @@ document.querySelectorAll('.acc-head').forEach(head=>{
     lfo2.start(0);
 
     masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-    masterGain.gain.linearRampToValueAtTime(0.03, audioCtx.currentTime + 3);
+    masterGain.gain.linearRampToValueAtTime(0.065, audioCtx.currentTime + 2.5);
   }
 
   function start(){
@@ -1260,11 +1271,15 @@ document.querySelectorAll('.acc-head').forEach(head=>{
     started = true;
     buildWaterSound();
     btn.classList.add('playing');
+    btn.classList.remove('hint');
   }
 
-  ['click','keydown','scroll'].forEach(evt=>{
+  ['click','keydown','scroll','touchstart'].forEach(evt=>{
     window.addEventListener(evt, start, {once:true, passive:true});
   });
+
+  // nudge the visitor to tap for sound, since browsers block autoplay with audio
+  setTimeout(()=>{ if(!started) btn.classList.add('hint'); }, 1200);
 
   btn.addEventListener('click', ()=>{
     if(!started){ muted=false; start(); return; }
