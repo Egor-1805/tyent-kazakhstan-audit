@@ -1263,22 +1263,35 @@ document.querySelectorAll('.acc-head').forEach(head=>{
 
     playDroplet(audioCtx.currentTime);
 
-    const bufferSize = 2 * audioCtx.sampleRate;
+    // pink noise (1/f) instead of white noise — much warmer and softer, closer to a real stream than static hiss
+    const bufferSize = 4 * audioCtx.sampleRate;
     const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
     const data = noiseBuffer.getChannelData(0);
-    for(let i=0;i<bufferSize;i++) data[i] = Math.random()*2-1;
+    let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+    for(let i=0;i<bufferSize;i++){
+      const white = Math.random()*2-1;
+      b0 = 0.99886*b0 + white*0.0555179;
+      b1 = 0.99332*b1 + white*0.0750759;
+      b2 = 0.96900*b2 + white*0.1538520;
+      b3 = 0.86650*b3 + white*0.3104856;
+      b4 = 0.55000*b4 + white*0.5329522;
+      b5 = -0.7616*b5 - white*0.0168980;
+      data[i] = (b0+b1+b2+b3+b4+b5+b6+white*0.5362) * 0.11;
+      b6 = white*0.115926;
+    }
     const noise = audioCtx.createBufferSource();
     noise.buffer = noiseBuffer;
     noise.loop = true;
 
+    // narrower, lower-centred filtering removes the hissy top end and leaves a soft, rounded murmur
     const bandpass = audioCtx.createBiquadFilter();
     bandpass.type = 'bandpass';
-    bandpass.frequency.value = 700;
-    bandpass.Q.value = 0.55;
+    bandpass.frequency.value = 460;
+    bandpass.Q.value = 0.45;
 
     const lowpass = audioCtx.createBiquadFilter();
     lowpass.type = 'lowpass';
-    lowpass.frequency.value = 1400;
+    lowpass.frequency.value = 900;
 
     masterGain = audioCtx.createGain();
     masterGain.gain.value = 0;
@@ -1286,25 +1299,33 @@ document.querySelectorAll('.acc-head').forEach(head=>{
     noise.connect(bandpass).connect(lowpass).connect(masterGain).connect(audioCtx.destination);
     noise.start(0);
 
-    // slow drifting LFO on the filter for a "flowing" feel, not a static hiss
+    // slow drifting LFOs on the filters — the unhurried "flowing" quality
     const lfo = audioCtx.createOscillator();
-    lfo.frequency.value = 0.12;
+    lfo.frequency.value = 0.085;
     const lfoGain = audioCtx.createGain();
-    lfoGain.gain.value = 260;
+    lfoGain.gain.value = 140;
     lfo.connect(lfoGain).connect(bandpass.frequency);
     lfo.start(0);
 
     const lfo2 = audioCtx.createOscillator();
-    lfo2.frequency.value = 0.05;
+    lfo2.frequency.value = 0.04;
     const lfo2Gain = audioCtx.createGain();
-    lfo2Gain.gain.value = 200;
+    lfo2Gain.gain.value = 110;
     lfo2.connect(lfo2Gain).connect(lowpass.frequency);
     lfo2.start(0);
 
-    // ambience fades in just after the droplet lands, underneath it
+    // gentle volume "breathing" — water softly welling up and receding, not a flat drone
+    const swell = audioCtx.createOscillator();
+    swell.frequency.value = 0.1;
+    const swellGain = audioCtx.createGain();
+    swellGain.gain.value = 0.011;
+    swell.connect(swellGain).connect(masterGain.gain);
+    swell.start(0);
+
+    // ambience fades in soft and slow, just after the droplet lands, underneath it
     masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
     masterGain.gain.setValueAtTime(0, audioCtx.currentTime + 0.2);
-    masterGain.gain.linearRampToValueAtTime(0.065, audioCtx.currentTime + 2.7);
+    masterGain.gain.linearRampToValueAtTime(0.055, audioCtx.currentTime + 3.2);
   }
 
   function start(){
